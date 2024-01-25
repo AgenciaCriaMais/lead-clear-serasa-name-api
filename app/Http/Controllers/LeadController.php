@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class LeadController extends Controller
@@ -36,7 +37,7 @@ class LeadController extends Controller
         try {
             $leads = Lead::findOrFail($id);
             return response()->json($leads);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json(['mensagem' => 'Lead não encontrado'], 404);
         }
 
@@ -47,7 +48,16 @@ class LeadController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        try {
+            $leads = Lead::findOrFail($id);
 
+            // Atualize os campos do lead com base nos dados recebidos na solicitação
+            $leads->update($request->all());
+
+            return response()->json($leads);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['mensagem' => 'Lead não encontrado'], 404);
+        }
     }
 
     /**

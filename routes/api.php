@@ -22,3 +22,4 @@ Route::get('/leads', [LeadController::class, 'index']);
 Route::post('/leads', [LeadController::class, 'store']);
 Route::delete('/leads/{id}', [LeadController::class, 'destroy']);
 Route::get('/leads/{id}', [LeadController::class, 'show']);
+Route::put('/leads/{id}', [LeadController::class, 'update']);
