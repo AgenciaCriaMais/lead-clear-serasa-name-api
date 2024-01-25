@@ -18,8 +18,12 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::get('/leads', [LeadController::class, 'index']);
-Route::post('/leads', [LeadController::class, 'store']);
-Route::delete('/leads/{id}', [LeadController::class, 'destroy']);
-Route::get('/leads/{id}', [LeadController::class, 'show']);
-Route::put('/leads/{id}', [LeadController::class, 'update']);
+Route::group(['prefix'=> 'leads', 'as'=> 'leads'], function (){
+    Route::get('/', [LeadController::class, 'index']);
+    Route::post('/', [LeadController::class, 'store']);
+    Route::get('/{id}', [LeadController::class, 'show']);
+    Route::put('/{id}', [LeadController::class, 'update']);
+    Route::delete('/{id}', [LeadController::class, 'destroy']);
+});
+
+
