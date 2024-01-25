@@ -12,9 +12,9 @@ class LeadController extends Controller
      */
     public function index()
     {
-       $leads = Lead::all();
+        $leads = Lead::all();
 
-       return response($leads,200);
+        return response($leads, 200);
     }
 
     /**
@@ -23,8 +23,8 @@ class LeadController extends Controller
     public function store(Request $request)
     {
 //        dd($request->all());
-        $lead = Lead::created($request->all());
-        return response(['name'=>$lead], 201);
+        $lead = Lead::create($request->all());
+        return response(['name' => $lead], 201);
     }
 
     /**
@@ -32,7 +32,14 @@ class LeadController extends Controller
      */
     public function show(string $id)
     {
-        //
+
+        try {
+            $leads = Lead::findOrFail($id);
+            return response()->json($leads);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['mensagem' => 'Lead não encontrado'], 404);
+        }
+
     }
 
     /**
@@ -40,7 +47,7 @@ class LeadController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
     }
 
     /**
@@ -48,6 +55,7 @@ class LeadController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Lead::destroy($id);
+        return response(['message' => 'foi apagado'], 204);
     }
 }

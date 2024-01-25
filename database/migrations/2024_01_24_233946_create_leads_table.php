@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('cpf',11)->unique();
             $table->string('syndicate')->nullable();
-            $table->string('status')->nullable()->default('IN_PROGRESS');
+            $table->string('status')->nullable()('IN_PROGRESS');
             $table->text('description')->nullable();
             $table->string('phone');
             $table->timestamps();
