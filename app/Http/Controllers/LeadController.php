@@ -23,7 +23,6 @@ class LeadController extends Controller
      */
     public function store(Request $request)
     {
-//        dd($request->all());
         $lead = Lead::create($request->all());
         return response(['name' => $lead], 201);
     }
@@ -31,29 +30,26 @@ class LeadController extends Controller
     /**
      * Display the specified resource.
      */
+
     public function show(string $id)
     {
-
         try {
             $leads = Lead::findOrFail($id);
             return response()->json($leads);
         } catch (ModelNotFoundException $e) {
             return response()->json(['mensagem' => 'Lead não encontrado'], 404);
         }
-
     }
 
     /**
      * Update the specified resource in storage.
      */
+
     public function update(Request $request, string $id)
     {
         try {
             $leads = Lead::findOrFail($id);
-
-            // Atualize os campos do lead com base nos dados recebidos na solicitação
             $leads->update($request->all());
-
             return response()->json($leads);
         } catch (ModelNotFoundException $e) {
             return response()->json(['mensagem' => 'Lead não encontrado'], 404);
@@ -66,6 +62,6 @@ class LeadController extends Controller
     public function destroy(string $id)
     {
         Lead::destroy($id);
-        return response(['message' => 'foi apagado'], 204);
+        return response(['message' => 'Lead foi Excluído com sucesso'], 204);
     }
 }
