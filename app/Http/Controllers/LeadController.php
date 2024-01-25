@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lead;
 use Illuminate\Http\Request;
 
 class LeadController extends Controller
@@ -11,7 +12,9 @@ class LeadController extends Controller
      */
     public function index()
     {
-        return "o cabuloso";
+       $leads = Lead::all();
+
+       return response($leads,200);
     }
 
     /**
@@ -19,7 +22,9 @@ class LeadController extends Controller
      */
     public function store(Request $request)
     {
-        //
+//        dd($request->all());
+        $lead = Lead::created($request->all());
+        return response(['name'=>$lead], 201);
     }
 
     /**

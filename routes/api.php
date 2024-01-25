@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\LeadController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,4 +18,5 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::get('/leads',[LeadController::class], 'index' );
+Route::get('/leads', [LeadController::class, 'index']);
+Route::post('/leads', [LeadController::class, 'store']);
