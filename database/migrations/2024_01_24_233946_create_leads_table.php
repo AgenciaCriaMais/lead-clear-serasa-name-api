@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('cpf',11)->unique();
-            $table->string('sindicato')->unique();
+            $table->string('syndicate')->unique();
             $table->string('status');          
-            $table->string('descricao');          
-            $table->string('telefone')->unique();          
+            $table->text('description');          
+            $table->string('phone')->unique();          
             $table->timestamps();
         });
     }
