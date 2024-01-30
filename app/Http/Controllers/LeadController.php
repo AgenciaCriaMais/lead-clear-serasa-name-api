@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Wallace Miller
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LeadRequest;
@@ -7,6 +11,11 @@ use App\Models\Lead;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
+/**
+ * @author Wallace Miller <wallacemillerdias@gmail.com>
+ * @description Essa classe faz o controle de leads
+ * @date 30/01/2023
+ */
 class LeadController extends Controller
 {
     /**
@@ -15,7 +24,6 @@ class LeadController extends Controller
     public function index()
     {
         $leads = Lead::all();
-
         return response($leads, 200);
     }
 
@@ -26,17 +34,17 @@ class LeadController extends Controller
     {
         try {
             $lead = Lead::create([
-               'name' => $request->input('name'),
-               'email' => $request->input('email'),
-               'cpf' => $request->input('cpf'),
-               'syndicate' => $request->input('syndicate'),
-               'status' => $request->input('status'),
-               'description' => $request->input('description'),
-               'phone' => $request->input('phone')
-                ]);
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'cpf' => $request->input('cpf'),
+                'syndicate' => $request->input('syndicate'),
+                'status' => $request->input('status'),
+                'description' => $request->input('description'),
+                'phone' => $request->input('phone')
+            ]);
             return response(['lead' => $lead], 201);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Usuário não encontrado'], 404);
+            return response()->json(['message' => 'Erro ao cadastrar lead'], 404);
         }
     }
 
@@ -57,7 +65,6 @@ class LeadController extends Controller
     /**
      * Update the specified resource in storage.
      */
-
     public function update(Request $request, string $id)
     {
         try {
@@ -65,7 +72,7 @@ class LeadController extends Controller
             $leads->update($request->all());
             return response()->json($leads);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['mensagem' => 'Lead não encontrado'], 404);
+            return response()->json(['mensagem' => 'Erro ao atualizar lead'], 404);
         }
     }
 
@@ -75,6 +82,6 @@ class LeadController extends Controller
     public function destroy(string $id)
     {
         Lead::destroy($id);
-        return response(['message' => 'Lead foi Excluído com sucesso'], 204);
+        return response(['message' => 'Lead foi excluído com sucesso'], 204);
     }
 }
