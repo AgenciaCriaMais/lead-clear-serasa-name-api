@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LeadRequest;
 use App\Models\Lead;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -21,10 +22,22 @@ class LeadController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(LeadRequest $request)
     {
-        $lead = Lead::create($request->all());
-        return response(['name' => $lead], 201);
+        try {
+            $lead = Lead::create([
+               'name' => $request->input('name'),
+               'email' => $request->input('email'),
+               'cpf' => $request->input('cpf'),
+               'syndicate' => $request->input('syndicate'),
+               'status' => $request->input('status'),
+               'description' => $request->input('description'),
+               'phone' => $request->input('phone')
+                ]);
+            return response(['lead' => $lead], 201);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Usuário não encontrado'], 404);
+        }
     }
 
     /**
