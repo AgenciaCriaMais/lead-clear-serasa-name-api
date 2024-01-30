@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Wallace Miller
- */
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LeadRequest;
@@ -51,7 +47,6 @@ class LeadController extends Controller
     /**
      * Display the specified resource.
      */
-
     public function show(string $id)
     {
         try {
