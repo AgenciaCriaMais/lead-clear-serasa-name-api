@@ -1,0 +1,14 @@
+version: "3"
+services:
+    bancoMariaDb:
+        image: mariadb
+        restart: always
+        container_name: bancoMariaDb
+        ports:
+            - "3306:3306"
+        volumes:
+            - .:/code
+        environment:
+            - MYSQL_USER=root
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=lead-serasa
