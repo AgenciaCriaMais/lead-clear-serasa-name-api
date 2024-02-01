@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\LeadController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::group(['prefix' => 'leads', 'as' => 'leads'], function () {
+    Route::get('/', [LeadController::class, 'index']);
+    Route::post('/', [LeadController::class, 'store']);
+    Route::get('/{id}', [LeadController::class, 'show']);
+    Route::put('/{id}', [LeadController::class, 'update']);
+    Route::delete('/{id}', [LeadController::class, 'destroy']);
 });
+
+
+
