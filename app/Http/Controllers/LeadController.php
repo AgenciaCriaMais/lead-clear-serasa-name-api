@@ -2,10 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Dto\ErrorResponseDto;
+use App\Dto\SuccessResponseDto;
 use App\Http\Requests\LeadRequest;
 use App\Models\Lead;
+use Exception;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
+use Symfony\Component\HttpFoundation\Response as StatusCode;
 
 /**
  * @author Wallace Miller <wallacemillerdias@gmail.com>
@@ -16,17 +25,19 @@ class LeadController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * @throws UnknownProperties
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $leads = Lead::all();
-        return response($leads, 200);
+        $responseDto = new SuccessResponseDto(data: $leads);
+        return response()->json($responseDto->toArray(), StatusCode::HTTP_OK);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(LeadRequest $request)
+    public function store(LeadRequest $request): Application|Response|JsonResponse|\Illuminate\Contracts\Foundation\Application|ResponseFactory
     {
         try {
             $lead = Lead::create([
@@ -38,36 +49,42 @@ class LeadController extends Controller
                 'description' => $request->input('description'),
                 'phone' => $request->input('phone')
             ]);
-            return response(['lead' => $lead], 201);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Erro ao cadastrar lead'], 404);
+            $responseDto = new SuccessResponseDto(data: $lead, message: "Lead criado com sucesso.");
+            return response()->json($responseDto->toArray(), StatusCode::HTTP_CREATED);
+        } catch (Exception $e) {
+            $errorResponseDto = new ErrorResponseDto(error: $e->getMessage(), message: "Erro ao criar lead.");
+            return response()->json($errorResponseDto->toArray(), StatusCode::HTTP_BAD_REQUEST);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
         try {
             $leads = Lead::findOrFail($id);
-            return response()->json($leads);
+            $responseDto = new SuccessResponseDto(data: $leads, message: "Lead encontrado com sucesso.");
+            return response()->json($responseDto->toArray(), 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['mensagem' => 'Lead não encontrado'], 404);
+            $errorResponseDto = new ErrorResponseDto(error: $e->getMessage(), message: "Lead não encontrado.");
+            return response()->json($errorResponseDto->toArray(), StatusCode::HTTP_NOT_FOUND);
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(LeadRequest $request, string $id): JsonResponse
     {
         try {
             $leads = Lead::findOrFail($id);
             $leads->update($request->all());
-            return response()->json($leads);
+            $responseDto = new SuccessResponseDto(data: $leads, message: "Lead atualizado com sucesso.");
+            return response()->json($responseDto->toArray(), StatusCode::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['mensagem' => 'Erro ao atualizar lead'], 404);
+            $errorResponseDto = new ErrorResponseDto(error: "Lead não encontrado.", message: "Nenhum lead encontrado com o ID ($id) fornecido para atualização.");
+            return response()->json($errorResponseDto->toArray(), StatusCode::HTTP_NOT_FOUND);
         }
     }
 
@@ -76,7 +93,14 @@ class LeadController extends Controller
      */
     public function destroy(string $id)
     {
-        Lead::destroy($id);
-        return response(['message' => 'Lead foi excluído com sucesso'], 204);
+        try {
+            $lead = Lead::findOrFail($id);
+            $lead->delete();
+            $responseDto = new SuccessResponseDto(data: null, message: "Lead deletado com sucesso.");
+            return response()->json($responseDto->toArray(), StatusCode::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            $errorResponseDto = new ErrorResponseDto(error: "Lead não encontrado.", message: "Nenhum lead encontrado com o ID ($id) fornecido para deleção.");
+            return response()->json($errorResponseDto->toArray(), StatusCode::HTTP_NOT_FOUND);
+        }
     }
 }
