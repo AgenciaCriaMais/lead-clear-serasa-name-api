@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Dto\ErrorResponseDto;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -18,22 +19,26 @@ class LeadRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-        return [
-            'name' => 'required|string|min:3|max:45',
-            'email' => 'required|email|unique:leads,email',
-            'cpf' => 'required|cpf|unique:leads,cpf|min:11|max:11',
-            'syndicate' => 'required|string',
-            'status' => 'string',
-            'description' => 'string',
-            'phone' => 'required|numeric'
+        $rules = [
+            'name' => 'string|min:3|max:200',
+            'email' => 'email|unique:leads,email,' . $this->lead,
+            'cpf' => 'cpf|unique:leads,cpf,' . $this->lead . '|min:11|max:11',
+            'syndicate' => 'string',
+            'phone' => 'numeric',
+            'status' => 'sometimes|string',
+            'description' => 'sometimes|string'
         ];
+        
+        if ($this->isMethod('post')) {
+            $requiredFields = ['name', 'email', 'cpf', 'syndicate', 'phone'];
+            foreach ($requiredFields as $field) {
+                $rules[$field] = 'required|' . $rules[$field];
+            }
+        }
+
+        return $rules;
     }
 
     public function messages()
@@ -62,21 +67,17 @@ class LeadRequest extends FormRequest
     /**
      * Handle a failed validation attempt.
      *
-     * @param \Illuminate\Contracts\Validation\Validator $validator
+     * @param Validator $validator
      * @return void
      *
-     * @throws \Illuminate\Validation\ValidationException
      */
-
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator): void
     {
         $errors = (new ValidationException($validator))->errors();
         $messages = array_merge(...array_values($errors));
+        $errorResponseDto = new ErrorResponseDto(error: $messages, message: 'Existe erros de validação.');
         throw new HttpResponseException(
-            response()->json([
-                'message' => "",
-                'errors' => $messages
-            ], Response::HTTP_UNPROCESSABLE_ENTITY)
+            response()->json($errorResponseDto->toArray(), Response::HTTP_UNPROCESSABLE_ENTITY)
         );
     }
 }
