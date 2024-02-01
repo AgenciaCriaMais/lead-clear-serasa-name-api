@@ -11,7 +11,6 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpFoundation\Response as StatusCode;
@@ -30,7 +29,7 @@ class LeadController extends Controller
     public function index(): JsonResponse
     {
         $leads = Lead::all();
-        $responseDto = new SuccessResponseDto(data: $leads);
+        $responseDto = new SuccessResponseDto(data: $leads, message: 'Listando todos os leads.');
         return response()->json($responseDto->toArray(), StatusCode::HTTP_OK);
     }
 
@@ -91,7 +90,7 @@ class LeadController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         try {
             $lead = Lead::findOrFail($id);

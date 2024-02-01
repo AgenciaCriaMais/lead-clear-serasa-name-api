@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::group(['prefix'=> 'leads', 'as'=> 'leads'], function (){
+Route::group(['prefix' => 'leads', 'as' => 'leads'], function () {
     Route::get('/', [LeadController::class, 'index']);
     Route::post('/', [LeadController::class, 'store']);
     Route::get('/{id}', [LeadController::class, 'show']);

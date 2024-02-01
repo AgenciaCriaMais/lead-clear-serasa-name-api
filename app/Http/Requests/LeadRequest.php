@@ -30,7 +30,7 @@ class LeadRequest extends FormRequest
             'status' => 'sometimes|string',
             'description' => 'sometimes|string'
         ];
-        
+
         if ($this->isMethod('post')) {
             $requiredFields = ['name', 'email', 'cpf', 'syndicate', 'phone'];
             foreach ($requiredFields as $field) {

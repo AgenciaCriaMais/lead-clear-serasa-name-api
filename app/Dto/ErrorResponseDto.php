@@ -3,6 +3,7 @@
 namespace App\Dto;
 
 use Spatie\DataTransferObject\DataTransferObject;
+
 /**
  * @author Jean Paul <jeanpaulwebb@gmail.com>
  * Classe DTO para Respostas de Erro da API
