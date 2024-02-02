@@ -48,7 +48,11 @@ class LeadController extends Controller
                 'description' => $request->input('description'),
                 'phone' => $request->input('phone')
             ]);
-            $responseDto = new SuccessResponseDto(data: $lead, message: "Lead criado com sucesso.");
+            $responseDto = new SuccessResponseDto(data: $lead, message: "
+                Estamos muito felizes por ter você conosco!
+                Seu cadastro foi concluído com sucesso.
+                Fique atento(a), entraremos em contato em breve.
+            ");
             return response()->json($responseDto->toArray(), StatusCode::HTTP_CREATED);
         } catch (Exception $e) {
             $errorResponseDto = new ErrorResponseDto(error: $e->getMessage(), message: "Erro ao criar lead.");
