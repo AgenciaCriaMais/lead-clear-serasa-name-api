@@ -21,14 +21,17 @@ class LeadRequest extends FormRequest
 
     public function rules(): array
     {
+
+//        dd($this);
+
         $rules = [
             'name' => 'string|min:3|max:200',
             'email' => 'email|unique:leads,email,' . $this->lead,
             'cpf' => 'cpf|unique:leads,cpf,' . $this->lead . '|min:11|max:11',
             'syndicate' => 'string',
             'phone' => 'numeric',
-            'status' => 'sometimes|string',
-            'description' => 'sometimes|string'
+            'status' => 'sometimes|string|nullable',
+            'description' => 'sometimes|string|nullable'
         ];
 
         if ($this->isMethod('post')) {
@@ -37,6 +40,7 @@ class LeadRequest extends FormRequest
                 $rules[$field] = 'required|' . $rules[$field];
             }
         }
+
 
         return $rules;
     }
@@ -53,12 +57,12 @@ class LeadRequest extends FormRequest
             'email.email' => 'Por favor insira um e-mail válido.',
             'cpf.required' => 'O campo cpf é obrigatório.',
             'cpf.unique' => 'Este cpf já está cadastrado.',
-            'cpf.min' => 'O campo nome não pode ter menos de :min caracteres.',
-            'cpf.max' => 'O campo nome não pode ter mais de :max caracteres.',
+            'cpf.min' => 'O campo CPF não pode ter menos de :min caracteres.',
+            'cpf.max' => 'O campo CPF não pode ter mais de :max caracteres.',
             'syndicate.string' => 'O campo sindicato deve ser do tipo texto.',
             'syndicate.required' => 'O campo sindicato é obrigatório.',
             'status.string' => "O campo status só aceita texto.",
-            'description.string' => "O campo status só aceita texto.",
+            'description.string' => "O campo de descrição só aceita texto.",
             'phone.required' => 'O campo telefone é obrigatório.',
             'phone.numeric' => 'O campo telefone deve conter apenas números.'
         ];
