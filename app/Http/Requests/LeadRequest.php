@@ -3,10 +3,12 @@
 namespace App\Http\Requests;
 
 use App\Dto\ErrorResponseDto;
+use App\Models\Lead;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class LeadRequest extends FormRequest
@@ -21,27 +23,38 @@ class LeadRequest extends FormRequest
 
     public function rules(): array
     {
-
-//        dd($this);
-
         $rules = [
             'name' => 'string|min:3|max:200',
-            'email' => 'email|unique:leads,email,' . $this->lead,
-            'cpf' => 'cpf|unique:leads,cpf,' . $this->lead . '|min:11|max:11',
+            'email' => 'email|min:3|max:255',
+            'cpf' => 'cpf|min:11|max:11',
             'syndicate' => 'string',
             'phone' => 'numeric',
             'status' => 'sometimes|string|nullable',
             'description' => 'sometimes|string|nullable'
         ];
-
         if ($this->isMethod('post')) {
             $requiredFields = ['name', 'email', 'cpf', 'syndicate', 'phone'];
             foreach ($requiredFields as $field) {
                 $rules[$field] = 'required|' . $rules[$field];
             }
+            $rules['email'] .= '|unique:leads,email';
+            $rules['cpf'] .= '|unique:leads,cpf';
         }
-
-
+        if ($this->isMethod('put')) {
+            $leadId = $this->route('lead');
+            $lead = Lead::find($leadId);
+            if ($lead) {
+                $emailValidation = Rule::unique('leads', 'email')->ignore($lead->id);
+                $cpfValidation = Rule::unique('leads', 'cpf')->ignore($lead->id);
+                $rules['email'] .= '|' . $emailValidation;
+                $rules['cpf'] .= '|' . $cpfValidation;
+                foreach (array_keys($rules) as $field) {
+                    if (!array_key_exists($field, $this->input())) {
+                        unset($rules[$field]);
+                    }
+                }
+            }
+        }
         return $rules;
     }
 
