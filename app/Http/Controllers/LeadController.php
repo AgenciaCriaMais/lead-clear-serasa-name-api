@@ -28,7 +28,7 @@ class LeadController extends Controller
      */
     public function index(): JsonResponse
     {
-        $leads = Lead::all();
+        $leads = Lead::orderBy('created_at', 'desc')->get();
         $responseDto = new SuccessResponseDto(data: $leads, message: 'Listando todos os leads.');
         return response()->json($responseDto->toArray(), StatusCode::HTTP_OK);
     }
